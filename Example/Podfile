@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '9.0'
+
+target 'LFUCache_Example' do
+  pod 'LFUCache', :path => '../'
+
+  target 'LFUCache_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
