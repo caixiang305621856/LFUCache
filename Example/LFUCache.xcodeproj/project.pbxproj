@@ -10,6 +10,9 @@
 		5A58055426C806B400B8C890 /* ACDoubleLinkedList.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A58054F26C806B400B8C890 /* ACDoubleLinkedList.m */; };
 		5A58055526C806B400B8C890 /* ACLinkedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A58055026C806B400B8C890 /* ACLinkedNode.m */; };
 		5A58055626C806B400B8C890 /* ACLFUCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A58055226C806B400B8C890 /* ACLFUCache.m */; };
+		5A5805A126C8C85300B8C890 /* LFUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A5805A026C8C85300B8C890 /* LFUViewController.m */; };
+		5A5805BC26C8EF3900B8C890 /* ACNSCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A5805BB26C8EF3900B8C890 /* ACNSCache.m */; };
+		5A5805C226C8F18A00B8C890 /* ACNSCacheViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A5805C126C8F18A00B8C890 /* ACNSCacheViewController.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -50,6 +53,12 @@
 		5A58055126C806B400B8C890 /* ACDoubleLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACDoubleLinkedList.h; sourceTree = "<group>"; };
 		5A58055226C806B400B8C890 /* ACLFUCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACLFUCache.m; sourceTree = "<group>"; };
 		5A58055326C806B400B8C890 /* ACLinkedNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACLinkedNode.h; sourceTree = "<group>"; };
+		5A58059F26C8C85300B8C890 /* LFUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LFUViewController.h; sourceTree = "<group>"; };
+		5A5805A026C8C85300B8C890 /* LFUViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LFUViewController.m; sourceTree = "<group>"; };
+		5A5805BA26C8EF3900B8C890 /* ACNSCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACNSCache.h; sourceTree = "<group>"; };
+		5A5805BB26C8EF3900B8C890 /* ACNSCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACNSCache.m; sourceTree = "<group>"; };
+		5A5805C026C8F18A00B8C890 /* ACNSCacheViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACNSCacheViewController.h; sourceTree = "<group>"; };
+		5A5805C126C8F18A00B8C890 /* ACNSCacheViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ACNSCacheViewController.m; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* LFUCache_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LFUCache_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -118,6 +127,8 @@
 		5A58054D26C806B400B8C890 /* LFUCache */ = {
 			isa = PBXGroup;
 			children = (
+				5A5805BA26C8EF3900B8C890 /* ACNSCache.h */,
+				5A5805BB26C8EF3900B8C890 /* ACNSCache.m */,
 				5A58055126C806B400B8C890 /* ACDoubleLinkedList.h */,
 				5A58054F26C806B400B8C890 /* ACDoubleLinkedList.m */,
 				5A58054E26C806B400B8C890 /* ACLFUCache.h */,
@@ -169,6 +180,10 @@
 			children = (
 				6003F59C195388D20070C39A /* ACAppDelegate.h */,
 				6003F59D195388D20070C39A /* ACAppDelegate.m */,
+				5A58059F26C8C85300B8C890 /* LFUViewController.h */,
+				5A5805A026C8C85300B8C890 /* LFUViewController.m */,
+				5A5805C026C8F18A00B8C890 /* ACNSCacheViewController.h */,
+				5A5805C126C8F18A00B8C890 /* ACNSCacheViewController.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* ACViewController.h */,
 				6003F5A6195388D20070C39A /* ACViewController.m */,
@@ -389,11 +404,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A58055626C806B400B8C890 /* ACLFUCache.m in Sources */,
+				5A5805C226C8F18A00B8C890 /* ACNSCacheViewController.m in Sources */,
 				6003F59E195388D20070C39A /* ACAppDelegate.m in Sources */,
 				5A58055426C806B400B8C890 /* ACDoubleLinkedList.m in Sources */,
+				5A5805A126C8C85300B8C890 /* LFUViewController.m in Sources */,
 				5A58055526C806B400B8C890 /* ACLinkedNode.m in Sources */,
 				6003F5A7195388D20070C39A /* ACViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				5A5805BC26C8EF3900B8C890 /* ACNSCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

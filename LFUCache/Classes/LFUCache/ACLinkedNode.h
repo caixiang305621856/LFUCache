@@ -9,10 +9,15 @@
 
 @interface ACLinkedNode : NSObject
 
-@property (strong, nonatomic) ACLinkedNode *prev;
-@property (strong, nonatomic) ACLinkedNode *next;
+/// 前驱
+@property (weak, nonatomic) ACLinkedNode *prev;
+/// 后驱
+@property (weak, nonatomic) ACLinkedNode *next;
+/// 节点的key
 @property (strong, nonatomic) id key;
+/// 节点的value
 @property (strong, nonatomic) id value;
+/// 节点被访问的频次
 @property (nonatomic) NSUInteger frequency;
 
 - (instancetype)initWithKey:(id)key value:(id)value frequency:(NSUInteger)frequency;

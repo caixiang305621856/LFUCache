@@ -18,5 +18,9 @@
     return self;
 }
 
+//- (void)dealloc {
+//    NSLog(@"%@",[NSThread currentThread]);
+//}
+
 
 @end

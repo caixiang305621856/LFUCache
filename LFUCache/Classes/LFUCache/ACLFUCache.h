@@ -6,36 +6,35 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ACDoubleLinkedList.h"
-#import "ACLinkedNode.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ACLFUCache : NSObject
-/// 容量 缓存容量
-@property (readonly) NSUInteger capacity;
-/// 大小 缓存数量
+
+/// 容量限制 默认是NSUIntegerMax
+@property NSUInteger countLimit;
+/// 已缓存数量
 @property (readonly) NSUInteger count;
 /// 默认YES
 @property BOOL shouldRemoveAllObjectsOnMemoryWarning;
 /// 默认YES
 @property BOOL shouldRemoveAllObjectsWhenEnteringBackground;
-
+/// 内存警告触发回调
 @property (nullable, copy) void(^didReceiveMemoryWarningBlock)(ACLFUCache *cache);
-
+/// 进入后台触发回调
 @property (nullable, copy) void(^didEnterBackgroundBlock)(ACLFUCache *cache);
 
-- (instancetype)initWithCapacity:(NSInteger)capacity;
+- (instancetype)initWithCapacity:(NSUInteger)capacity;
 
-- (BOOL)containsObjectForKey:(id<NSCopying>)key;
-
-- (nullable id)objectForKey:(id<NSCopying>)key;
-
-- (void)setObject:(nullable id)object forKey:(id<NSCopying>)key;
-
+- (BOOL)containsObjectForKey:(id)key;
+- (nullable id)objectForKey:(id)key;
+- (void)setObject:(nullable id)object forKey:(id)key;
 - (void)removeObjectForKey:(id)key;
-
 - (void)removeAllObjects;
+
+- (NSArray *)allkeys;
+- (NSArray *)allValues;
 
 @end
 

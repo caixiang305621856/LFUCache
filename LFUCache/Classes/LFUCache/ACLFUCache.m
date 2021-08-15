@@ -8,19 +8,18 @@
 #import "ACLFUCache.h"
 #import <pthread.h>
 #import <UIKit/UIKit.h>
+#import "ACDoubleLinkedList.h"
+#import "ACLinkedNode.h"
 
 @interface ACLFUCache() {
     pthread_mutex_t _lock;
 }
 
-/// 容量
-@property NSUInteger capacity;
-/// 大小
 @property NSUInteger count;
 /// 当前最小频率
 @property NSUInteger minFreq;
 /// key和数据节点的映射
-@property (strong, nonatomic) NSMutableDictionary <id<NSCopying>,ACLinkedNode*>*map;
+@property (strong, nonatomic) NSMapTable <id, ACLinkedNode *>*map;
 /// 频率和数据组成的链表的映射
 @property (strong, nonatomic) NSMutableDictionary <NSNumber *,ACDoubleLinkedList*>*freqMap;
 
@@ -31,15 +30,16 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.capacity = NSUIntegerMax;
+        self.countLimit = NSUIntegerMax;
         [self setup];
     }
     return self;
 }
 
-- (instancetype)initWithCapacity:(NSInteger)capacity {
-    if (self == [super init]) {
-        self.capacity = capacity;
+- (instancetype)initWithCapacity:(NSUInteger)capacity {
+    self = [super init];
+    if (self) {
+        self.countLimit = capacity;
         [self setup];
     }
     return self;
@@ -48,8 +48,8 @@
 - (void)setup {
     pthread_mutex_init(&_lock, NULL);
     self.minFreq = 1;
-    self.map = [[NSMutableDictionary alloc] init];
-    self.freqMap = [[NSMutableDictionary alloc] init];
+    self.map = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsWeakMemory valueOptions:NSPointerFunctionsStrongMemory capacity:0];
+    self.freqMap = [NSMutableDictionary new];
     self.shouldRemoveAllObjectsWhenEnteringBackground = YES;
     self.shouldRemoveAllObjectsOnMemoryWarning = YES;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appDidReceiveMemoryWarningNotification) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
@@ -76,18 +76,18 @@
 
 
 #pragma mark - public
-- (BOOL)containsObjectForKey:(id<NSCopying>)key {
+- (BOOL)containsObjectForKey:(id)key {
     if (!key) return NO;
-    pthread_mutex_lock(&_lock);
-    BOOL contains = [self.map.allKeys containsObject:key];
+    pthread_mutex_lock(&_lock);    
+    BOOL contains = [self.map.keyEnumerator.allObjects containsObject:key];
     pthread_mutex_unlock(&_lock);
     return contains;
 }
 
-- (nullable id)objectForKey:(id<NSCopying>)key {
+- (nullable id)objectForKey:(id)key {
     if (!key) return nil;
     pthread_mutex_lock(&_lock);
-    ACLinkedNode *node = self.map[key];
+    ACLinkedNode *node = [self.map objectForKey:key];
     if (node) {
         //增加数据的访问频率
         [self freqPlus:node];
@@ -96,15 +96,15 @@
     return node?node.value:nil;
 }
 
-- (void)setObject:(nullable id)object forKey:(id<NSCopying>)key {
+- (void)setObject:(nullable id)object forKey:(id)key {
     if (!key) return;
-    if (_capacity <= 0) return;
+    if (_countLimit <= 0) return;
     if (!object) {
         [self removeObjectForKey:key];
         return;
     }
     pthread_mutex_lock(&_lock);
-    ACLinkedNode *node = self.map[key];
+    ACLinkedNode *node = [self.map objectForKey:key];
     if (node != nil) {
         node.value = object;
         //增加数据的访问频率
@@ -131,7 +131,7 @@
 - (void)removeObjectForKey:(id)key {
     if (!key) return;
     pthread_mutex_lock(&_lock);
-    ACLinkedNode *node = self.map[key];
+    ACLinkedNode *node = [self.map objectForKey:key];
     if (node) {
         [self.map removeObjectForKey:node.key];
         //取出要被删除的node 频次对应的 linkList
@@ -156,14 +156,37 @@
     pthread_mutex_unlock(&_lock);
 }
 
+- (NSArray *)allkeys {
+    pthread_mutex_lock(&_lock);
+    NSArray *result = self.map.keyEnumerator.allObjects;
+    pthread_mutex_unlock(&_lock);
+    return result;
+}
+
+- (NSArray *)allValues {
+    NSMutableArray *result = [NSMutableArray array];
+    pthread_mutex_lock(&_lock);
+    NSEnumerator *objectEnumerator = self.map.objectEnumerator;
+    for (ACLinkedNode *obj in objectEnumerator.allObjects) {
+        if (obj.value) {
+            [result addObject:obj.value];
+        }
+    }
+    pthread_mutex_unlock(&_lock);
+    return result;
+}
+
 #pragma mark - private
 /// 增加访问频率
 - (void)freqPlus:(ACLinkedNode *)node {
     NSUInteger frequency = node.frequency;
     ACDoubleLinkedList *oldLinkList = self.freqMap[@(node.frequency)];
     [oldLinkList removeNode:node];
-    
-    if (self.minFreq == frequency && [oldLinkList isEmpty]) {
+    if ([oldLinkList isEmpty]) {
+        //移除旧的的链表
+        [self.freqMap removeObjectForKey:@(node.frequency)];
+    }
+    if (self.minFreq == frequency && ([oldLinkList isEmpty] || oldLinkList == nil)) {
         self.minFreq++;
     }
     frequency ++;
@@ -177,7 +200,7 @@
 }
 
 - (void)eliminate {
-    if (_count < _capacity) {
+    if (_count < _countLimit) {
         return;
     }
     ACDoubleLinkedList *linkList = self.freqMap[@(self.minFreq)];
